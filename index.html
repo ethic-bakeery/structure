@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Structure Tree Visualizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #2980b9;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a3a, #2c3e50);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #3498db, #e74c3c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        .page {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Landing Page */
+        .structures {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .structure-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .structure-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--secondary);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .structure-card.state { background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(41, 128, 185, 0.1)); }
+        .structure-card.national { background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(192, 57, 43, 0.1)); }
+        .structure-card.lga { background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(39, 174, 96, 0.1)); }
+
+        .structure-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .structure-card.state .structure-icon { color: #3498db; }
+        .structure-card.national .structure-icon { color: #e74c3c; }
+        .structure-card.lga .structure-icon { color: #2ecc71; }
+
+        .structure-card h2 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .structure-card p {
+            margin: 8px 0;
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+
+        .structure-card .note {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Tree Visualization */
+        .tree-container {
+            margin-top: 30px;
+            overflow: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            min-height: 500px;
+        }
+
+        .tree-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tree-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .tree-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .org-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            min-height: 400px;
+        }
+
+        /* Level container with title above */
+        .level-container {
+            margin: 60px 0;
+            width: 100%;
+            position: relative;
+        }
+
+        .level-title {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            display: inline-block;
+            position: relative;
+            left: 35%;
+            transform: translateX(-50%);
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .level {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            position: relative;
+        }
+
+        .node {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            width: 180px;
+            margin: 0 15px 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.8rem;
+        }
+
+        .state .profile-icon { background: #3498db; }
+        .national .profile-icon { background: #e74c3c; }
+        .lga .profile-icon { background: #2ecc71; }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .node-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Connectors */
+        .connectors {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+        }
+
+        .connector {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .vertical {
+            width: 2px;
+            height: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .horizontal {
+            height: 2px;
+            top: 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #219653;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .scale-in {
+            animation: scaleIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .structures {
+                grid-template-columns: 1fr;
+            }
+            
+            .level {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .node {
+                margin: 0 0 40px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tree-header h2 {
+                font-size: 1.6rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .level-title {
+                font-size: 1.2rem;
+                padding: 8px 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Organization Structure Tree Visualizer</h1>
+            <p class="subtitle">Explore the hierarchical structure of organizations across different administrative levels in Nigeria. Select a structure type below to visualize the team organization.</p>
+        </header>
+        
+        <main>
+            <!-- Landing Page -->
+            <div id="landing-page" class="page">
+                <div class="structures">
+                    <!-- State Structure -->
+                    <div class="structure-card state animate-in" data-structure="state">
+                        <div class="structure-icon">
+                            <i class="fas fa-city"></i>
+                        </div>
+                        <h2>State Structure</h2>
+                        <p><i class="fas fa-users"></i> 14 members per state</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 36 States + Abuja (FCT)</p>
+                        <div class="note">
+                            This structure is the same for all 36 Nigerian states and Abuja (FCT), i.e., 14 × 37 = 518 people.
+                        </div>
+                    </div>
+                    
+                    <!-- National Structure -->
+                    <div class="structure-card national animate-in delay-1" data-structure="national">
+                        <div class="structure-icon">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <h2>National Structure</h2>
+                        <p><i class="fas fa-users"></i> 25 members total</p>
+                        <p><i class="fas fa-globe-africa"></i> National level only</p>
+                        <div class="note">
+                            This is the only National Team, i.e., 25 people in total.
+                        </div>
+                    </div>
+                    
+                    <!-- LGA Structure -->
+                    <div class="structure-card lga animate-in delay-2" data-structure="lga">
+                        <div class="structure-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h2>Local Government Structure</h2>
+                        <p><i class="fas fa-users"></i> 9 members per LGA</p>
+                        <p><i class="fas fa-map"></i> 774 Local Government Areas</p>
+                        <div class="note">
+                            This structure is replicated for all 774 Local Governments, i.e., 9 × 774 = 6,966 people.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tree Visualization (Initially Hidden) -->
+            <div id="tree-page" class="page" style="display: none;">
+                <div class="tree-header">
+                    <h2 id="tree-title">State Structure</h2>
+                    <p id="tree-subtitle">Common Across 36 States + FCT</p>
+                </div>
+                
+                <div class="tree-container">
+                    <div id="org-tree" class="org-tree">
+                        <!-- Tree will be dynamically generated here -->
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="back-btn" class="btn-outline">
+                        <i class="fas fa-arrow-left"></i> Back to Selection
+                    </button>
+                    <button id="export-png" class="btn-warning">
+                        <i class="fas fa-download"></i> Export as PNG
+                    </button>
+                    <button id="toggle-theme" class="btn-success">
+                        <i class="fas fa-moon"></i> Dark Mode
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Structure data
+        const structures = {
+            state: {
+                title: "State Structure",
+                subtitle: "Common Across 36 States + FCT",
+                note: "This structure is the same for all 36 Nigerian states and Abuja (FCT), i.e., 14 × 37 = 518 people.",
+                levels: [
+                    {
+                        title: "Top Level",
+                        nodes: [
+                            { 
+                                title: "State Lead Coordinator", 
+                                subtitle: "1 position", 
+                                icon: "fas fa-user-tie" 
+                            }
+                        ]
+                    },
+                    {
+                        title: "Management Level",
+                        nodes: [
+                            { 
+                                title: "Assistant Coordinators", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-users-cog" 
+                            }
+                        ]
+                    },
+                    {
+                        title: "Operational Level",
+                        nodes: [
+                            { 
+                                title: "Media & Public Relations", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-bullhorn" 
+                            },
+                            { 
+                                title: "Legal & Policy Advisors", 
+                                subtitle: "2 positions", 
+                                icon: "fas fa-gavel" 
+                            },
+                            { 
+                                title: "Event & Mobilization Officers", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-calendar-check" 
+                            },
+                            { 
+                                title: "Security & Risk Team", 
+                                subtitle: "2 positions", 
+                                icon: "fas fa-shield-alt" 
+                            }
+                        ]
+                    }
+                ]
+            },
+            national: {
+                title: "National Structure",
+                subtitle: "Only One Team",
+                note: "This is the only National Team, i.e., 25 people in total.",
+                levels: [
+                    {
+                        title: "Leadership",
+                        nodes: [
+                            { 
+                                title: "National Chairperson", 
+                                subtitle: "1 position", 
+                                icon: "fas fa-crown" 
+                            }
+                        ]
+                    },
+                    {
+                        title: "Executive Level",
+                        nodes: [
+                            { 
+                                title: "Vice-Chairpersons", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-user-friends" 
+                            }
+                        ]
+                    },
+                    {
+                        title: "Department Level",
+                        nodes: [
+                            { 
+                                title: "Public Relations", 
+                                subtitle: "4 positions", 
+                                icon: "fas fa-comments" 
+                            },
+                            { 
+                                title: "Legal & Compliance", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-balance-scale" 
+                            },
+                            { 
+                                title: "Mobilization & Strategy", 
+                                subtitle: "5 positions", 
+                                icon: "fas fa-chess-board" 
+                            },
+                            { 
+                                title: "Security & Risk Advisors", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-user-shield" 
+                            },
+                            { 
+                                title: "State Liaison Officers", 
+                                subtitle: "6 positions", 
+                                icon: "fas fa-hands-helping" 
+                            }
+                        ]
+                    }
+                ]
+            },
+            lga: {
+                title: "Local Government Structure",
+                subtitle: "Common Across 774 LGAs",
+                note: "This structure is replicated for all 774 Local Governments, i.e., 9 × 774 = 6,966 people.",
+                levels: [
+                    {
+                        title: "Leadership",
+                        nodes: [
+                            { 
+                                title: "Lead Coordinator", 
+                                subtitle: "1 position", 
+                                icon: "fas fa-user" 
+                            }
+                        ]
+                    },
+                    {
+                        title: "Coordination Level",
+                        nodes: [
+                            { 
+                                title: "Community Organizers", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-hands" 
+                            }
+                        ]
+                    },
+                    {
+                        title: "Operational Level",
+                        nodes: [
+                            { 
+                                title: "Communication Officers", 
+                                subtitle: "2 positions", 
+                                icon: "fas fa-comment-alt" 
+                            },
+                            { 
+                                title: "Legal Advisor", 
+                                subtitle: "1 position", 
+                                icon: "fas fa-book" 
+                            },
+                            { 
+                                title: "Security & Strategy", 
+                                subtitle: "2 positions", 
+                                icon: "fas fa-lock" 
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // DOM Elements
+        const landingPage = document.getElementById('landing-page');
+        const treePage = document.getElementById('tree-page');
+        const treeTitle = document.getElementById('tree-title');
+        const treeSubtitle = document.getElementById('tree-subtitle');
+        const orgTree = document.getElementById('org-tree');
+        const backBtn = document.getElementById('back-btn');
+        const exportBtn = document.getElementById('export-png');
+        const themeBtn = document.getElementById('toggle-theme');
+        const structureCards = document.querySelectorAll('.structure-card');
+
+        // Initialize the application
+        function init() {
+            // Event listeners for structure cards
+            structureCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const structureType = card.getAttribute('data-structure');
+                    showStructure(structureType);
+                });
+            });
+
+            // Back button event
+            backBtn.addEventListener('click', () => {
+                landingPage.style.display = 'block';
+                treePage.style.display = 'none';
+            });
+
+            // Export button event (placeholder)
+            exportBtn.addEventListener('click', () => {
+                alert('Export functionality would be implemented here. In a real application, this would generate a PNG image of the organizational chart.');
+            });
+
+            // Theme toggle
+            themeBtn.addEventListener('click', toggleTheme);
+        }
+
+        // Show selected structure
+        function showStructure(structureType) {
+            const structure = structures[structureType];
+            
+            // Update tree header
+            treeTitle.textContent = structure.title;
+            treeSubtitle.textContent = structure.subtitle;
+            
+            // Generate tree
+            generateTree(structure.levels);
+            
+            // Show tree page
+            landingPage.style.display = 'none';
+            treePage.style.display = 'block';
+        }
+
+        // Generate the organization tree
+        function generateTree(levels) {
+            orgTree.innerHTML = '';
+            
+            levels.forEach((level, levelIndex) => {
+                // Create container for each level with its title
+                const levelContainer = document.createElement('div');
+                levelContainer.className = 'level-container';
+                
+                // Level title
+                const levelTitle = document.createElement('div');
+                levelTitle.className = 'level-title scale-in';
+                levelTitle.textContent = level.title;
+                levelContainer.appendChild(levelTitle);
+                
+                // Nodes container
+                const levelElement = document.createElement('div');
+                levelElement.className = `level ${levelIndex % 2 === 0 ? 'state' : 'national'}`;
+                
+                const nodesContainer = document.createElement('div');
+                nodesContainer.className = 'nodes-container';
+                nodesContainer.style.display = 'flex';
+                nodesContainer.style.flexWrap = 'wrap';
+                nodesContainer.style.justifyContent = 'center';
+                
+                level.nodes.forEach((node, nodeIndex) => {
+                    const nodeElement = document.createElement('div');
+                    nodeElement.className = `node animate-in delay-${nodeIndex + 1}`;
+                    
+                    const profileIcon = document.createElement('div');
+                    profileIcon.className = 'profile-icon';
+                    profileIcon.innerHTML = `<i class="${node.icon}"></i>`;
+                    
+                    const nodeTitle = document.createElement('div');
+                    nodeTitle.className = 'node-title';
+                    nodeTitle.textContent = node.title;
+                    
+                    const nodeSubtitle = document.createElement('div');
+                    nodeSubtitle.className = 'node-subtitle';
+                    nodeSubtitle.textContent = node.subtitle;
+                    
+                    nodeElement.appendChild(profileIcon);
+                    nodeElement.appendChild(nodeTitle);
+                    nodeElement.appendChild(nodeSubtitle);
+                    
+                    nodesContainer.appendChild(nodeElement);
+                });
+                
+                levelElement.appendChild(nodesContainer);
+                levelContainer.appendChild(levelElement);
+                orgTree.appendChild(levelContainer);
+            });
+        }
+
+        // Toggle dark/light theme
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const icon = themeBtn.querySelector('i');
+            const text = themeBtn.querySelector('span');
+            
+            if (document.body.classList.contains('light-theme')) {
+                document.body.style.background = 'linear-gradient(135deg, #ecf0f1, #bdc3c7)';
+                document.body.style.color = '#2c3e50';
+                icon.className = 'fas fa-sun';
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #1a2a3a, #2c3e50)';
+                document.body.style.color = '#ecf0f1';
+                icon.className = 'fas fa-moon';
+                themeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
