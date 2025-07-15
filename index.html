@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NURA Organization Structure Tree Visualizer</title>
+    <title>Organization Structure Tree Visualizer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -30,23 +30,76 @@
             background: linear-gradient(135deg, #1a2a3a, #2c3e50);
             color: var(--light);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(44, 62, 80, 0.95);
+            z-index: 1000;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .mobile-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--light);
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .mobile-nav-btn i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+
+        .mobile-nav-btn.active {
+            background: rgba(52, 152, 219, 0.3);
         }
 
         header {
             text-align: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
         h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
             background: linear-gradient(to right, #3498db, #e74c3c);
             -webkit-background-clip: text;
             background-clip: text;
@@ -55,34 +108,35 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1rem;
             opacity: 0.9;
             max-width: 800px;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
+            padding: 0 10px;
         }
 
         .page {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 15px;
+            padding: 20px;
             box-shadow: var(--shadow);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         /* Landing Page */
         .structures {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
 
         .structure-card {
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 12px;
+            padding: 20px;
             text-align: center;
             transition: var(--transition);
             cursor: pointer;
@@ -103,8 +157,8 @@
         .structure-card.lga { background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(39, 174, 96, 0.1)); }
 
         .structure-icon {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
+            font-size: 2.8rem;
+            margin-bottom: 12px;
         }
 
         .structure-card.state .structure-icon { color: #3498db; }
@@ -112,50 +166,50 @@
         .structure-card.lga .structure-icon { color: #2ecc71; }
 
         .structure-card h2 {
-            font-size: 1.6rem;
-            margin-bottom: 15px;
+            font-size: 1.4rem;
+            margin-bottom: 12px;
             color: #fff;
         }
 
         .structure-card p {
-            margin: 8px 0;
-            font-size: 0.95rem;
+            margin: 6px 0;
+            font-size: 0.85rem;
             opacity: 0.85;
         }
 
         .structure-card .note {
-            margin-top: 15px;
-            padding: 12px;
+            margin-top: 12px;
+            padding: 10px;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            font-size: 0.9rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-style: italic;
         }
 
         /* Tree Visualization */
         .tree-container {
-            margin-top: 30px;
+            margin-top: 20px;
             overflow: auto;
-            padding: 20px;
+            padding: 15px;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            min-height: 500px;
+            border-radius: 12px;
+            min-height: 400px;
         }
 
         .tree-header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .tree-header h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 1.6rem;
+            margin-bottom: 8px;
         }
 
         .tree-header p {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             opacity: 0.9;
         }
 
@@ -164,30 +218,17 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            min-height: 400px;
+            min-height: 300px;
         }
 
         /* Level container with title above */
         .level-container {
-            margin: 60px 0;
+            margin: 40px 0;
             width: 100%;
             position: relative;
         }
 
-        .level-title {
-            text-align: center;
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            display: inline-block;
-            position: relative;
-            left: 40%;
-            transform: translateX(-50%);
-            color: #3498db;
-            font-weight: 600;
-        }
+      
 
         .level {
             display: flex;
@@ -199,11 +240,11 @@
 
         .node {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px 15px;
+            border-radius: 10px;
+            padding: 15px;
             text-align: center;
-            width: 180px;
-            margin: 0 15px 30px;
+            width: 160px;
+            margin: 0 10px 20px;
             box-shadow: var(--shadow);
             position: relative;
             z-index: 2;
@@ -218,15 +259,15 @@
         }
 
         .profile-icon {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: var(--secondary);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 1.8rem;
+            margin: 0 auto 12px;
+            font-size: 1.5rem;
         }
 
         .state .profile-icon { background: #3498db; }
@@ -235,12 +276,12 @@
 
         .node-title {
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             margin-bottom: 5px;
         }
 
         .node-subtitle {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             opacity: 0.8;
         }
 
@@ -251,6 +292,8 @@
             left: 0;
             width: 100%;
             height: 20px;
+            display: flex;
+            justify-content: center;
         }
 
         .connector {
@@ -261,8 +304,7 @@
         .vertical {
             width: 2px;
             height: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 0;
         }
 
         .horizontal {
@@ -273,22 +315,24 @@
         .controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         button {
             background: var(--secondary);
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            font-size: 0.9rem;
         }
 
         button:hover {
@@ -348,8 +392,38 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                padding: 0 40px;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
             .structures {
                 grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .structure-card {
+                padding: 15px;
+            }
+            
+            .structure-icon {
+                font-size: 2.2rem;
+            }
+            
+            .structure-card h2 {
+                font-size: 1.2rem;
             }
             
             .level {
@@ -358,30 +432,61 @@
             }
             
             .node {
-                margin: 0 0 40px;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
+                width: 90%;
+                max-width: 260px;
+                margin: 0 auto 30px;
             }
             
             .tree-header h2 {
-                font-size: 1.6rem;
+                font-size: 1.3rem;
+            }
+            
+            .tree-header p {
+                font-size: 0.9rem;
+            }
+            
+            .level-title {
+                font-size: 1rem;
+                padding: 6px 12px;
             }
             
             .controls {
                 flex-direction: column;
                 align-items: center;
+                gap: 10px;
             }
             
             button {
                 width: 100%;
+                max-width: 280px;
                 justify-content: center;
+                padding: 12px;
+            }
+            
+            .tree-container {
+                padding: 10px;
+            }
+            
+            .page {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.4rem;
             }
             
             .level-title {
-                font-size: 1.2rem;
-                padding: 8px 11px;
+                font-size: 0.95rem;
+            }
+            
+            .node-title {
+                font-size: 0.9rem;
+            }
+            
+            .node {
+                width: 95%;
             }
         }
     </style>
@@ -389,8 +494,11 @@
 <body>
     <div class="container">
         <header>
-            <h1>Organization Structure Tree Visualizer</h1>
-            <p class="subtitle">Explore the hierarchical structure of NURA organization across different administrative levels in Nigeria. Select a structure type below to visualize the team organization.</p>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1>NURA Organization Structure Tree Visualizer</h1>
+            <p class="subtitle">Explore hierarchical structure of NURA across different administrative levels in Nigeria</p>
         </header>
         
         <main>
@@ -465,6 +573,28 @@
             </div>
         </main>
     </div>
+    
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-buttons">
+            <div class="mobile-nav-btn active" data-target="landing-page">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="mobile-nav-btn" data-target="tree-page">
+                <i class="fas fa-sitemap"></i>
+                <span>Structure</span>
+            </div>
+            <div class="mobile-nav-btn" id="mobile-theme-btn">
+                <i class="fas fa-moon"></i>
+                <span>Theme</span>
+            </div>
+            <div class="mobile-nav-btn" id="mobile-export-btn">
+                <i class="fas fa-download"></i>
+                <span>Export</span>
+            </div>
+        </div>
+    </nav>
 
     <script>
         // Structure data
@@ -475,7 +605,7 @@
                 note: "This structure is the same for all 36 Nigerian states and Abuja (FCT), i.e., 14 × 37 = 518 people.",
                 levels: [
                     {
-                        title: "Top Level",
+                       
                         nodes: [
                             { 
                                 title: "State Lead Coordinator", 
@@ -485,7 +615,7 @@
                         ]
                     },
                     {
-                        title: "Management Level",
+                       
                         nodes: [
                             { 
                                 title: "Assistant Coordinators", 
@@ -495,7 +625,7 @@
                         ]
                     },
                     {
-                        title: "Operational Level",
+                  
                         nodes: [
                             { 
                                 title: "Media & Public Relations", 
@@ -527,7 +657,7 @@
                 note: "This is the only National Team, i.e., 25 people in total.",
                 levels: [
                     {
-                        title: "Leadership",
+                      
                         nodes: [
                             { 
                                 title: "National Chairperson", 
@@ -537,7 +667,7 @@
                         ]
                     },
                     {
-                        title: "Executive Level",
+                      
                         nodes: [
                             { 
                                 title: "Vice-Chairpersons", 
@@ -547,7 +677,7 @@
                         ]
                     },
                     {
-                        title: "Department Level",
+                    
                         nodes: [
                             { 
                                 title: "Public Relations", 
@@ -584,7 +714,7 @@
                 note: "This structure is replicated for all 774 Local Governments, i.e., 9 × 774 = 6,966 people.",
                 levels: [
                     {
-                        title: "Leadership",
+                      
                         nodes: [
                             { 
                                 title: "Lead Coordinator", 
@@ -594,7 +724,7 @@
                         ]
                     },
                     {
-                        title: "Coordination Level",
+
                         nodes: [
                             { 
                                 title: "Community Organizers", 
@@ -604,7 +734,7 @@
                         ]
                     },
                     {
-                        title: "Operational Level",
+                      
                         nodes: [
                             { 
                                 title: "Communication Officers", 
@@ -637,6 +767,10 @@
         const exportBtn = document.getElementById('export-png');
         const themeBtn = document.getElementById('toggle-theme');
         const structureCards = document.querySelectorAll('.structure-card');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
+        const mobileThemeBtn = document.getElementById('mobile-theme-btn');
+        const mobileExportBtn = document.getElementById('mobile-export-btn');
 
         // Initialize the application
         function init() {
@@ -645,6 +779,13 @@
                 card.addEventListener('click', () => {
                     const structureType = card.getAttribute('data-structure');
                     showStructure(structureType);
+                    // Update mobile nav
+                    mobileNavBtns.forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.target === 'tree-page') {
+                            btn.classList.add('active');
+                        }
+                    });
                 });
             });
 
@@ -652,15 +793,51 @@
             backBtn.addEventListener('click', () => {
                 landingPage.style.display = 'block';
                 treePage.style.display = 'none';
+                // Update mobile nav
+                mobileNavBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.target === 'landing-page') {
+                        btn.classList.add('active');
+                    }
+                });
             });
 
-            // Export button event (placeholder)
+            // Export button event
             exportBtn.addEventListener('click', () => {
                 alert('Export functionality would be implemented here. In a real application, this would generate a PNG image of the organizational chart.');
             });
 
             // Theme toggle
             themeBtn.addEventListener('click', toggleTheme);
+            
+            // Mobile theme toggle
+            mobileThemeBtn.addEventListener('click', toggleTheme);
+            
+            // Mobile export button
+            mobileExportBtn.addEventListener('click', () => {
+                alert('Export functionality would be implemented here.');
+            });
+
+            // Mobile navigation
+            mobileNavBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = btn.dataset.target;
+                    if (target) {
+                        // Update active state
+                        mobileNavBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        // Show the target page
+                        if (target === 'landing-page') {
+                            landingPage.style.display = 'block';
+                            treePage.style.display = 'none';
+                        } else if (target === 'tree-page') {
+                            landingPage.style.display = 'none';
+                            treePage.style.display = 'block';
+                        }
+                    }
+                });
+            });
         }
 
         // Show selected structure
@@ -737,18 +914,20 @@
         function toggleTheme() {
             document.body.classList.toggle('light-theme');
             const icon = themeBtn.querySelector('i');
-            const text = themeBtn.querySelector('span');
+            const mobileIcon = mobileThemeBtn.querySelector('i');
             
             if (document.body.classList.contains('light-theme')) {
                 document.body.style.background = 'linear-gradient(135deg, #ecf0f1, #bdc3c7)';
                 document.body.style.color = '#2c3e50';
                 icon.className = 'fas fa-sun';
                 themeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                mobileIcon.className = 'fas fa-sun';
             } else {
                 document.body.style.background = 'linear-gradient(135deg, #1a2a3a, #2c3e50)';
                 document.body.style.color = '#ecf0f1';
                 icon.className = 'fas fa-moon';
                 themeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+                mobileIcon.className = 'fas fa-moon';
             }
         }
 
