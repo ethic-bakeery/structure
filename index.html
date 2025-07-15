@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="HandheldFriendly" content="true">
     <title>Organization Structure Tree Visualizer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -11,6 +12,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -30,76 +32,25 @@
             background: linear-gradient(135deg, #1a2a3a, #2c3e50);
             color: var(--light);
             min-height: 100vh;
-            padding: 10px;
+            padding: 15px;
+            line-height: 1.5;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 10px;
-        }
-
-        /* Mobile Navigation */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
             width: 100%;
-            background: rgba(44, 62, 80, 0.95);
-            z-index: 1000;
-            padding: 10px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .mobile-nav-buttons {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .mobile-nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--light);
-            font-size: 0.8rem;
-            padding: 5px 10px;
-            border-radius: 10px;
-            transition: var(--transition);
-        }
-
-        .mobile-nav-btn i {
-            font-size: 1.2rem;
-            margin-bottom: 3px;
-        }
-
-        .mobile-nav-btn.active {
-            background: rgba(52, 152, 219, 0.3);
         }
 
         header {
             text-align: center;
             padding: 15px 0;
             margin-bottom: 20px;
-            position: relative;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: var(--light);
-            font-size: 1.5rem;
-            cursor: pointer;
         }
 
         h1 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin-bottom: 10px;
             background: linear-gradient(to right, #3498db, #e74c3c);
             -webkit-background-clip: text;
             background-clip: text;
@@ -108,10 +59,10 @@
         }
 
         .subtitle {
-            font-size: 1rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             opacity: 0.9;
             max-width: 800px;
-            margin: 0 auto 15px;
+            margin: 0 auto 20px;
             padding: 0 10px;
         }
 
@@ -129,7 +80,7 @@
         .structures {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
+            gap: 20px;
             margin-top: 15px;
         }
 
@@ -143,6 +94,13 @@
             border: 2px solid transparent;
             position: relative;
             overflow: hidden;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .structure-card:active {
+            transform: scale(0.98);
         }
 
         .structure-card:hover {
@@ -157,7 +115,7 @@
         .structure-card.lga { background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(39, 174, 96, 0.1)); }
 
         .structure-icon {
-            font-size: 2.8rem;
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
             margin-bottom: 12px;
         }
 
@@ -166,15 +124,19 @@
         .structure-card.lga .structure-icon { color: #2ecc71; }
 
         .structure-card h2 {
-            font-size: 1.4rem;
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
             margin-bottom: 12px;
             color: #fff;
         }
 
         .structure-card p {
             margin: 6px 0;
-            font-size: 0.85rem;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
             opacity: 0.85;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
 
         .structure-card .note {
@@ -182,8 +144,12 @@
             padding: 10px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
             font-style: italic;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Tree Visualization */
@@ -194,22 +160,23 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             min-height: 400px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tree-header {
             text-align: center;
             margin-bottom: 20px;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .tree-header h2 {
-            font-size: 1.6rem;
+            font-size: clamp(1.4rem, 5vw, 2rem);
             margin-bottom: 8px;
         }
 
         .tree-header p {
-            font-size: 0.95rem;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
             opacity: 0.9;
         }
 
@@ -228,7 +195,22 @@
             position: relative;
         }
 
-      
+        .level-title {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            display: inline-block;
+            width: auto;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
         .level {
             display: flex;
@@ -236,20 +218,25 @@
             flex-wrap: wrap;
             width: 100%;
             position: relative;
+            gap: 15px;
         }
 
         .node {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 15px;
+            padding: 15px 12px;
             text-align: center;
             width: 160px;
-            margin: 0 10px 20px;
+            margin: 0 0 20px;
             box-shadow: var(--shadow);
             position: relative;
             z-index: 2;
             transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .node:active {
+            transform: scale(0.98) !important;
         }
 
         .node:hover {
@@ -276,12 +263,12 @@
 
         .node-title {
             font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 5px;
+            font-size: clamp(0.8rem, 3vw, 0.95rem);
+            margin-bottom: 4px;
         }
 
         .node-subtitle {
-            font-size: 0.75rem;
+            font-size: clamp(0.75rem, 3vw, 0.85rem);
             opacity: 0.8;
         }
 
@@ -292,8 +279,6 @@
             left: 0;
             width: 100%;
             height: 20px;
-            display: flex;
-            justify-content: center;
         }
 
         .connector {
@@ -304,7 +289,8 @@
         .vertical {
             width: 2px;
             height: 20px;
-            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .horizontal {
@@ -324,15 +310,22 @@
             background: var(--secondary);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 50px;
             cursor: pointer;
             font-weight: 600;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.9rem;
+            gap: 8px;
+            font-size: clamp(0.85rem, 3vw, 1rem);
+            min-width: 150px;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            transform: scale(0.96) !important;
         }
 
         button:hover {
@@ -392,101 +385,83 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .mobile-nav {
-                display: block;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-                padding: 0 40px;
-            }
-            
-            .subtitle {
-                font-size: 0.9rem;
-            }
-            
-            .structures {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
-            .structure-card {
-                padding: 15px;
-            }
-            
-            .structure-icon {
-                font-size: 2.2rem;
-            }
-            
-            .structure-card h2 {
-                font-size: 1.2rem;
-            }
-            
-            .level {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .node {
-                width: 90%;
-                max-width: 260px;
-                margin: 0 auto 30px;
-            }
-            
-            .tree-header h2 {
-                font-size: 1.3rem;
-            }
-            
-            .tree-header p {
-                font-size: 0.9rem;
-            }
-            
-            .level-title {
-                font-size: 1rem;
-                padding: 6px 12px;
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            button {
-                width: 100%;
-                max-width: 280px;
-                justify-content: center;
-                padding: 12px;
-            }
-            
-            .tree-container {
+            body {
                 padding: 10px;
             }
             
             .page {
                 padding: 15px;
+                border-radius: 12px;
+            }
+            
+            .structures {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .structure-card {
+                padding: 18px;
+            }
+            
+            .tree-container {
+                padding: 12px;
+            }
+            
+            .level-container {
+                margin: 30px 0;
+            }
+            
+            .node {
+                width: 140px;
+                margin-bottom: 15px;
+                padding: 12px 10px;
+            }
+            
+            .profile-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+                margin-bottom: 10px;
+            }
+            
+            .controls {
+                gap: 10px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                width: 100%;
+                max-width: 250px;
             }
         }
 
         @media (max-width: 480px) {
-            h1 {
-                font-size: 1.4rem;
+            .node {
+                width: 100%;
+                max-width: 180px;
             }
             
-            .level-title {
-                font-size: 0.95rem;
+            .level {
+                gap: 10px;
             }
             
-            .node-title {
-                font-size: 0.9rem;
+            .structure-card {
+                min-height: auto;
+            }
+            
+            .structure-card .note {
+                min-height: 60px;
+            }
+        }
+
+        /* Very small devices */
+        @media (max-width: 360px) {
+            .structure-card {
+                padding: 15px;
             }
             
             .node {
-                width: 95%;
+                max-width: 160px;
             }
         }
     </style>
@@ -494,11 +469,8 @@
 <body>
     <div class="container">
         <header>
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-            <h1>NURA Organization Structure Tree Visualizer</h1>
-            <p class="subtitle">Explore hierarchical structure of NURA across different administrative levels in Nigeria</p>
+            <h1>Organization Structure Tree Visualizer</h1>
+            <p class="subtitle">Explore the hierarchical structure of NURA organization across different administrative levels in Nigeria. Select a structure type below to visualize the team organization.</p>
         </header>
         
         <main>
@@ -561,40 +533,18 @@
                 
                 <div class="controls">
                     <button id="back-btn" class="btn-outline">
-                        <i class="fas fa-arrow-left"></i> Back to Selection
+                        <i class="fas fa-arrow-left"></i> <span>Back to Selection</span>
                     </button>
                     <button id="export-png" class="btn-warning">
-                        <i class="fas fa-download"></i> Export as PNG
+                        <i class="fas fa-download"></i> <span>Export as PNG</span>
                     </button>
                     <button id="toggle-theme" class="btn-success">
-                        <i class="fas fa-moon"></i> Dark Mode
+                        <i class="fas fa-moon"></i> <span>Dark Mode</span>
                     </button>
                 </div>
             </div>
         </main>
     </div>
-    
-    <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-buttons">
-            <div class="mobile-nav-btn active" data-target="landing-page">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </div>
-            <div class="mobile-nav-btn" data-target="tree-page">
-                <i class="fas fa-sitemap"></i>
-                <span>Structure</span>
-            </div>
-            <div class="mobile-nav-btn" id="mobile-theme-btn">
-                <i class="fas fa-moon"></i>
-                <span>Theme</span>
-            </div>
-            <div class="mobile-nav-btn" id="mobile-export-btn">
-                <i class="fas fa-download"></i>
-                <span>Export</span>
-            </div>
-        </div>
-    </nav>
 
     <script>
         // Structure data
@@ -605,7 +555,7 @@
                 note: "This structure is the same for all 36 Nigerian states and Abuja (FCT), i.e., 14 × 37 = 518 people.",
                 levels: [
                     {
-                       
+                        title: "Leadership",
                         nodes: [
                             { 
                                 title: "State Lead Coordinator", 
@@ -615,7 +565,7 @@
                         ]
                     },
                     {
-                       
+                        title: "Management",
                         nodes: [
                             { 
                                 title: "Assistant Coordinators", 
@@ -625,7 +575,7 @@
                         ]
                     },
                     {
-                  
+                        title: "Teams",
                         nodes: [
                             { 
                                 title: "Media & Public Relations", 
@@ -657,7 +607,7 @@
                 note: "This is the only National Team, i.e., 25 people in total.",
                 levels: [
                     {
-                      
+                        title: "Leadership",
                         nodes: [
                             { 
                                 title: "National Chairperson", 
@@ -667,7 +617,7 @@
                         ]
                     },
                     {
-                      
+                        title: "Management",
                         nodes: [
                             { 
                                 title: "Vice-Chairpersons", 
@@ -677,7 +627,7 @@
                         ]
                     },
                     {
-                    
+                        title: "Teams",
                         nodes: [
                             { 
                                 title: "Public Relations", 
@@ -714,7 +664,7 @@
                 note: "This structure is replicated for all 774 Local Governments, i.e., 9 × 774 = 6,966 people.",
                 levels: [
                     {
-                      
+                        title: "Leadership",
                         nodes: [
                             { 
                                 title: "Lead Coordinator", 
@@ -724,7 +674,7 @@
                         ]
                     },
                     {
-
+                        title: "Management",
                         nodes: [
                             { 
                                 title: "Community Organizers", 
@@ -734,7 +684,7 @@
                         ]
                     },
                     {
-                      
+                        title: "Teams",
                         nodes: [
                             { 
                                 title: "Communication Officers", 
@@ -767,10 +717,6 @@
         const exportBtn = document.getElementById('export-png');
         const themeBtn = document.getElementById('toggle-theme');
         const structureCards = document.querySelectorAll('.structure-card');
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
-        const mobileThemeBtn = document.getElementById('mobile-theme-btn');
-        const mobileExportBtn = document.getElementById('mobile-export-btn');
 
         // Initialize the application
         function init() {
@@ -779,65 +725,32 @@
                 card.addEventListener('click', () => {
                     const structureType = card.getAttribute('data-structure');
                     showStructure(structureType);
-                    // Update mobile nav
-                    mobileNavBtns.forEach(btn => {
-                        btn.classList.remove('active');
-                        if (btn.dataset.target === 'tree-page') {
-                            btn.classList.add('active');
-                        }
-                    });
                 });
+                
+                // Add touch feedback
+                card.addEventListener('touchstart', () => {
+                    card.classList.add('active');
+                }, { passive: true });
+                
+                card.addEventListener('touchend', () => {
+                    card.classList.remove('active');
+                }, { passive: true });
             });
 
             // Back button event
             backBtn.addEventListener('click', () => {
                 landingPage.style.display = 'block';
                 treePage.style.display = 'none';
-                // Update mobile nav
-                mobileNavBtns.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.target === 'landing-page') {
-                        btn.classList.add('active');
-                    }
-                });
+                window.scrollTo(0, 0);
             });
 
-            // Export button event
+            // Export button event (placeholder)
             exportBtn.addEventListener('click', () => {
                 alert('Export functionality would be implemented here. In a real application, this would generate a PNG image of the organizational chart.');
             });
 
             // Theme toggle
             themeBtn.addEventListener('click', toggleTheme);
-            
-            // Mobile theme toggle
-            mobileThemeBtn.addEventListener('click', toggleTheme);
-            
-            // Mobile export button
-            mobileExportBtn.addEventListener('click', () => {
-                alert('Export functionality would be implemented here.');
-            });
-
-            // Mobile navigation
-            mobileNavBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const target = btn.dataset.target;
-                    if (target) {
-                        // Update active state
-                        mobileNavBtns.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        
-                        // Show the target page
-                        if (target === 'landing-page') {
-                            landingPage.style.display = 'block';
-                            treePage.style.display = 'none';
-                        } else if (target === 'tree-page') {
-                            landingPage.style.display = 'none';
-                            treePage.style.display = 'block';
-                        }
-                    }
-                });
-            });
         }
 
         // Show selected structure
@@ -854,6 +767,7 @@
             // Show tree page
             landingPage.style.display = 'none';
             treePage.style.display = 'block';
+            window.scrollTo(0, 0);
         }
 
         // Generate the organization tree
@@ -868,22 +782,18 @@
                 // Level title
                 const levelTitle = document.createElement('div');
                 levelTitle.className = 'level-title scale-in';
-                levelTitle.textContent = level.title;
-                levelContainer.appendChild(levelTitle);
+                levelTitle.textContent = level.title || '';
+                if (level.title) {
+                    levelContainer.appendChild(levelTitle);
+                }
                 
                 // Nodes container
                 const levelElement = document.createElement('div');
                 levelElement.className = `level ${levelIndex % 2 === 0 ? 'state' : 'national'}`;
                 
-                const nodesContainer = document.createElement('div');
-                nodesContainer.className = 'nodes-container';
-                nodesContainer.style.display = 'flex';
-                nodesContainer.style.flexWrap = 'wrap';
-                nodesContainer.style.justifyContent = 'center';
-                
                 level.nodes.forEach((node, nodeIndex) => {
                     const nodeElement = document.createElement('div');
-                    nodeElement.className = `node animate-in delay-${nodeIndex + 1}`;
+                    nodeElement.className = `node animate-in delay-${nodeIndex % 4 + 1}`;
                     
                     const profileIcon = document.createElement('div');
                     profileIcon.className = 'profile-icon';
@@ -901,10 +811,9 @@
                     nodeElement.appendChild(nodeTitle);
                     nodeElement.appendChild(nodeSubtitle);
                     
-                    nodesContainer.appendChild(nodeElement);
+                    levelElement.appendChild(nodeElement);
                 });
                 
-                levelElement.appendChild(nodesContainer);
                 levelContainer.appendChild(levelElement);
                 orgTree.appendChild(levelContainer);
             });
@@ -914,20 +823,18 @@
         function toggleTheme() {
             document.body.classList.toggle('light-theme');
             const icon = themeBtn.querySelector('i');
-            const mobileIcon = mobileThemeBtn.querySelector('i');
+            const text = themeBtn.querySelector('span');
             
             if (document.body.classList.contains('light-theme')) {
                 document.body.style.background = 'linear-gradient(135deg, #ecf0f1, #bdc3c7)';
                 document.body.style.color = '#2c3e50';
                 icon.className = 'fas fa-sun';
-                themeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
-                mobileIcon.className = 'fas fa-sun';
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i> <span>Light Mode</span>';
             } else {
                 document.body.style.background = 'linear-gradient(135deg, #1a2a3a, #2c3e50)';
                 document.body.style.color = '#ecf0f1';
                 icon.className = 'fas fa-moon';
-                themeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
-                mobileIcon.className = 'fas fa-moon';
+                themeBtn.innerHTML = '<i class="fas fa-moon"></i> <span>Dark Mode</span>';
             }
         }
 
