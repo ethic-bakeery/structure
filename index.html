@@ -152,6 +152,84 @@
             justify-content: center;
         }
 
+        /* Responsibilities Section */
+        .responsibilities {
+            margin-top: 15px;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .responsibilities.show {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .responsibilities h3 {
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            margin-bottom: 10px;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .responsibilities h3 i {
+            color: var(--secondary);
+        }
+
+        .responsibilities ul {
+            list-style-type: none;
+            padding-left: 5px;
+        }
+
+        .responsibilities li {
+            margin-bottom: 8px;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            position: relative;
+            padding-left: 25px;
+            line-height: 1.4;
+        }
+
+        .responsibilities li:before {
+            content: "•";
+            color: var(--secondary);
+            font-size: 1.2rem;
+            position: absolute;
+            left: 5px;
+            top: -2px;
+        }
+
+        .toggle-responsibilities {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .toggle-responsibilities:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .toggle-responsibilities i {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-responsibilities.active i {
+            transform: rotate(180deg);
+        }
+
         /* Tree Visualization */
         .tree-container {
             margin-top: 20px;
@@ -233,6 +311,7 @@
             z-index: 2;
             transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
         }
 
         .node:active {
@@ -270,6 +349,46 @@
         .node-subtitle {
             font-size: clamp(0.75rem, 3vw, 0.85rem);
             opacity: 0.8;
+        }
+
+        /* Node Responsibilities */
+        .node-responsibilities {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-size: clamp(0.75rem, 3vw, 0.85rem);
+            text-align: left;
+        }
+
+        .node-responsibilities.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .node-responsibilities h4 {
+            margin-bottom: 5px;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            color: var(--light);
+        }
+
+        .node-responsibilities ul {
+            list-style-type: none;
+            padding-left: 15px;
+        }
+
+        .node-responsibilities li {
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .node-responsibilities li:before {
+            content: "•";
+            color: var(--secondary);
+            position: absolute;
+            left: 0;
         }
 
         /* Connectors */
@@ -361,7 +480,7 @@
 
         /* Animation */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -433,6 +552,10 @@
                 width: 100%;
                 max-width: 250px;
             }
+
+            .node-responsibilities {
+                padding: 8px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -452,6 +575,10 @@
             .structure-card .note {
                 min-height: 60px;
             }
+
+            .responsibilities {
+                padding: 12px;
+            }
         }
 
         /* Very small devices */
@@ -470,36 +597,67 @@
     <div class="container">
         <header>
             <h1>Organization Structure Tree Visualizer</h1>
-            <p class="subtitle">Explore the hierarchical structure of NURA organization across different administrative levels in Nigeria. Select a structure type below to visualize the team organization.</p>
+            <p class="subtitle">Explore the hierarchical structure of NURA organization across different administrative levels in Nigeria with their responsibilities. Select a structure type below to visualize the team organization.</p>
         </header>
         
         <main>
             <!-- Landing Page -->
             <div id="landing-page" class="page">
                 <div class="structures">
-                    <!-- State Structure -->
-                    <div class="structure-card state animate-in" data-structure="state">
-                        <div class="structure-icon">
-                            <i class="fas fa-city"></i>
-                        </div>
-                        <h2>State Structure</h2>
-                        <p><i class="fas fa-users"></i> 14 members per state</p>
-                        <p><i class="fas fa-map-marker-alt"></i> 36 States + Abuja (FCT)</p>
-                        <div class="note">
-                            This structure is the same for all 36 Nigerian states and Abuja (FCT), i.e., 14 × 37 = 518 people.
-                        </div>
-                    </div>
-                    
                     <!-- National Structure -->
-                    <div class="structure-card national animate-in delay-1" data-structure="national">
+                    <div class="structure-card national animate-in" data-structure="national">
                         <div class="structure-icon">
                             <i class="fas fa-flag"></i>
                         </div>
-                        <h2>National Structure</h2>
+                        <h2>National Team</h2>
                         <p><i class="fas fa-users"></i> 25 members total</p>
-                        <p><i class="fas fa-globe-africa"></i> National level only</p>
+                        <p><i class="fas fa-globe-africa"></i> Central leadership</p>
                         <div class="note">
-                            This is the only National Team, i.e., 25 people in total.
+                            Central leadership and strategic direction for the entire organization.
+                        </div>
+                        
+                        <button class="toggle-responsibilities">
+                            <i class="fas fa-chevron-down"></i> Show Responsibilities
+                        </button>
+                        
+                        <div class="responsibilities">
+                            <h3><i class="fas fa-tasks"></i> Key Responsibilities</h3>
+                            <ul>
+                                <li>High-level decision making</li>
+                                <li>National media and government engagement</li>
+                                <li>Setting policies and strategies</li>
+                                <li>Organizing national events</li>
+                                <li>Handling legal and security challenges</li>
+                                <li>International representation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- State Structure -->
+                    <div class="structure-card state animate-in delay-1" data-structure="state">
+                        <div class="structure-icon">
+                            <i class="fas fa-city"></i>
+                        </div>
+                        <h2>State Teams</h2>
+                        <p><i class="fas fa-users"></i> 14 members per state</p>
+                        <p><i class="fas fa-map-marker-alt"></i> 36 States + Abuja (FCT)</p>
+                        <div class="note">
+                            Regional coordination across 37 states (including FCT).
+                        </div>
+                        
+                        <button class="toggle-responsibilities">
+                            <i class="fas fa-chevron-down"></i> Show Responsibilities
+                        </button>
+                        
+                        <div class="responsibilities">
+                            <h3><i class="fas fa-tasks"></i> Key Responsibilities</h3>
+                            <ul>
+                                <li>Overseeing Local Government teams</li>
+                                <li>Engaging with state media (radio, TV)</li>
+                                <li>Managing state-level social media</li>
+                                <li>Organizing state events and rallies</li>
+                                <li>Communicating feedback to National team</li>
+                            </ul>
                         </div>
                     </div>
                     
@@ -508,11 +666,26 @@
                         <div class="structure-icon">
                             <i class="fas fa-home"></i>
                         </div>
-                        <h2>Local Government Structure</h2>
+                        <h2>Local Government Teams</h2>
                         <p><i class="fas fa-users"></i> 9 members per LGA</p>
                         <p><i class="fas fa-map"></i> 774 Local Government Areas</p>
                         <div class="note">
-                            This structure is replicated for all 774 Local Governments, i.e., 9 × 774 = 6,966 people.
+                            Grassroots level operations across 774 LGAs.
+                        </div>
+                        
+                        <button class="toggle-responsibilities">
+                            <i class="chevron-down"></i> Show Responsibilities
+                        </button>
+                        
+                        <div class="responsibilities">
+                            <h3><i class="fas fa-tasks"></i> Key Responsibilities</h3>
+                            <ul>
+                                <li>Organizing local events and awareness campaigns</li>
+                                <li>Engaging traditional rulers and religious leaders</li>
+                                <li>Reporting weekly updates to State team</li>
+                                <li>Community mobilization at ward level</li>
+                                <li>Local media and social media engagement</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -521,8 +694,8 @@
             <!-- Tree Visualization (Initially Hidden) -->
             <div id="tree-page" class="page" style="display: none;">
                 <div class="tree-header">
-                    <h2 id="tree-title">State Structure</h2>
-                    <p id="tree-subtitle">Common Across 36 States + FCT</p>
+                    <h2 id="tree-title">National Structure</h2>
+                    <p id="tree-subtitle">Central Leadership Team</p>
                 </div>
                 
                 <div class="tree-container">
@@ -547,64 +720,20 @@
     </div>
 
     <script>
-        // Structure data
+        // Structure data with responsibilities
         const structures = {
-            state: {
-                title: "State Structure",
-                subtitle: "Common Across 36 States + FCT",
-                note: "This structure is the same for all 36 Nigerian states and Abuja (FCT), i.e., 14 × 37 = 518 people.",
-                levels: [
-                    {
-                        title: "Leadership",
-                        nodes: [
-                            { 
-                                title: "State Lead Coordinator", 
-                                subtitle: "1 position", 
-                                icon: "fas fa-user-tie" 
-                            }
-                        ]
-                    },
-                    {
-                        title: "Management",
-                        nodes: [
-                            { 
-                                title: "Assistant Coordinators", 
-                                subtitle: "3 positions", 
-                                icon: "fas fa-users-cog" 
-                            }
-                        ]
-                    },
-                    {
-                        title: "Teams",
-                        nodes: [
-                            { 
-                                title: "Media & Public Relations", 
-                                subtitle: "3 positions", 
-                                icon: "fas fa-bullhorn" 
-                            },
-                            { 
-                                title: "Legal & Policy Advisors", 
-                                subtitle: "2 positions", 
-                                icon: "fas fa-gavel" 
-                            },
-                            { 
-                                title: "Event & Mobilization Officers", 
-                                subtitle: "3 positions", 
-                                icon: "fas fa-calendar-check" 
-                            },
-                            { 
-                                title: "Security & Risk Team", 
-                                subtitle: "2 positions", 
-                                icon: "fas fa-shield-alt" 
-                            }
-                        ]
-                    }
-                ]
-            },
             national: {
-                title: "National Structure",
-                subtitle: "Only One Team",
-                note: "This is the only National Team, i.e., 25 people in total.",
+                title: "National Team",
+                subtitle: "Central Leadership Team",
+                note: "Central leadership and strategic direction for the entire organization.",
+                responsibilities: [
+                    "High-level decision making",
+                    "National media and government engagement",
+                    "Setting policies and strategies",
+                    "Organizing national events",
+                    "Handling legal and security challenges",
+                    "International representation"
+                ],
                 levels: [
                     {
                         title: "Leadership",
@@ -612,7 +741,13 @@
                             { 
                                 title: "National Chairperson", 
                                 subtitle: "1 position", 
-                                icon: "fas fa-crown" 
+                                icon: "fas fa-crown",
+                                responsibilities: [
+                                    "Overall strategic direction",
+                                    "Final decision-making authority",
+                                    "Primary national spokesperson",
+                                    "International representation"
+                                ]
                             }
                         ]
                     },
@@ -622,7 +757,13 @@
                             { 
                                 title: "Vice-Chairpersons", 
                                 subtitle: "3 positions", 
-                                icon: "fas fa-user-friends" 
+                                icon: "fas fa-user-friends",
+                                responsibilities: [
+                                    "Support Chairperson in decision-making",
+                                    "Oversee specific operational areas",
+                                    "Act as Chairperson when required",
+                                    "Coordinate between different teams"
+                                ]
                             }
                         ]
                     },
@@ -632,36 +773,168 @@
                             { 
                                 title: "Public Relations", 
                                 subtitle: "4 positions", 
-                                icon: "fas fa-comments" 
+                                icon: "fas fa-comments",
+                                responsibilities: [
+                                    "National media engagement",
+                                    "Press releases and statements",
+                                    "Crisis communication",
+                                    "Brand management"
+                                ]
                             },
                             { 
                                 title: "Legal & Compliance", 
                                 subtitle: "3 positions", 
-                                icon: "fas fa-balance-scale" 
+                                icon: "fas fa-balance-scale",
+                                responsibilities: [
+                                    "Legal advisory services",
+                                    "Regulatory compliance",
+                                    "Risk assessment",
+                                    "Contract management"
+                                ]
                             },
                             { 
                                 title: "Mobilization & Strategy", 
                                 subtitle: "5 positions", 
-                                icon: "fas fa-chess-board" 
+                                icon: "fas fa-chess-board",
+                                responsibilities: [
+                                    "National campaign strategy",
+                                    "Resource mobilization",
+                                    "Partnership development",
+                                    "Performance monitoring"
+                                ]
                             },
                             { 
                                 title: "Security & Risk Advisors", 
                                 subtitle: "3 positions", 
-                                icon: "fas fa-user-shield" 
+                                icon: "fas fa-user-shield",
+                                responsibilities: [
+                                    "Security planning",
+                                    "Risk assessment",
+                                    "Crisis management",
+                                    "Event security coordination"
+                                ]
                             },
                             { 
                                 title: "State Liaison Officers", 
                                 subtitle: "6 positions", 
-                                icon: "fas fa-hands-helping" 
+                                icon: "fas fa-hands-helping",
+                                responsibilities: [
+                                    "Coordinate with State teams",
+                                    "Communicate national directives",
+                                    "Gather state-level feedback",
+                                    "Facilitate resource distribution"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            state: {
+                title: "State Teams",
+                subtitle: "Regional Coordination",
+                note: "Regional coordination across 37 states (including FCT).",
+                responsibilities: [
+                    "Overseeing Local Government teams",
+                    "Engaging with state media (radio, TV)",
+                    "Managing state-level social media",
+                    "Organizing state events and rallies",
+                    "Communicating feedback to National team"
+                ],
+                levels: [
+                    {
+                        title: "Leadership",
+                        nodes: [
+                            { 
+                                title: "State Lead Coordinator", 
+                                subtitle: "1 position", 
+                                icon: "fas fa-user-tie",
+                                responsibilities: [
+                                    "Overall state leadership",
+                                    "Primary state spokesperson",
+                                    "Coordinate with National team",
+                                    "Final decision-making at state level"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Management",
+                        nodes: [
+                            { 
+                                title: "Assistant Coordinators", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-users-cog",
+                                responsibilities: [
+                                    "Support Lead Coordinator",
+                                    "Oversee specific operational areas",
+                                    "Act as Lead when required",
+                                    "Coordinate between LGA teams"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: "Teams",
+                        nodes: [
+                            { 
+                                title: "Media & Public Relations", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-bullhorn",
+                                responsibilities: [
+                                    "State media engagement",
+                                    "Local press releases",
+                                    "Social media management",
+                                    "Community outreach"
+                                ]
+                            },
+                            { 
+                                title: "Legal & Policy Advisors", 
+                                subtitle: "2 positions", 
+                                icon: "fas fa-gavel",
+                                responsibilities: [
+                                    "State legal compliance",
+                                    "Local policy interpretation",
+                                    "Dispute resolution",
+                                    "Regulatory liaison"
+                                ]
+                            },
+                            { 
+                                title: "Event & Mobilization Officers", 
+                                subtitle: "3 positions", 
+                                icon: "fas fa-calendar-check",
+                                responsibilities: [
+                                    "Organize state events",
+                                    "Community mobilization",
+                                    "Volunteer coordination",
+                                    "Logistics planning"
+                                ]
+                            },
+                            { 
+                                title: "Security & Risk Team", 
+                                subtitle: "2 positions", 
+                                icon: "fas fa-shield-alt",
+                                responsibilities: [
+                                    "Event security planning",
+                                    "Risk assessment",
+                                    "Emergency response",
+                                    "Local security coordination"
+                                ]
                             }
                         ]
                     }
                 ]
             },
             lga: {
-                title: "Local Government Structure",
-                subtitle: "Common Across 774 LGAs",
-                note: "This structure is replicated for all 774 Local Governments, i.e., 9 × 774 = 6,966 people.",
+                title: "Local Government Teams",
+                subtitle: "Grassroots Operations",
+                note: "Grassroots level operations across 774 LGAs.",
+                responsibilities: [
+                    "Organizing local events and awareness campaigns",
+                    "Engaging traditional rulers and religious leaders",
+                    "Reporting weekly updates to State team",
+                    "Community mobilization at ward level",
+                    "Local media and social media engagement"
+                ],
                 levels: [
                     {
                         title: "Leadership",
@@ -669,7 +942,13 @@
                             { 
                                 title: "Lead Coordinator", 
                                 subtitle: "1 position", 
-                                icon: "fas fa-user" 
+                                icon: "fas fa-user",
+                                responsibilities: [
+                                    "Overall LGA leadership",
+                                    "Primary community contact",
+                                    "Coordinate with State team",
+                                    "Local decision-making"
+                                ]
                             }
                         ]
                     },
@@ -679,7 +958,13 @@
                             { 
                                 title: "Community Organizers", 
                                 subtitle: "3 positions", 
-                                icon: "fas fa-hands" 
+                                icon: "fas fa-hands",
+                                responsibilities: [
+                                    "Ward-level mobilization",
+                                    "Community engagement",
+                                    "Local leader liaison",
+                                    "Grassroots feedback collection"
+                                ]
                             }
                         ]
                     },
@@ -689,17 +974,35 @@
                             { 
                                 title: "Communication Officers", 
                                 subtitle: "2 positions", 
-                                icon: "fas fa-comment-alt" 
+                                icon: "fas fa-comment-alt",
+                                responsibilities: [
+                                    "Local media engagement",
+                                    "Community announcements",
+                                    "Social media updates",
+                                    "Information dissemination"
+                                ]
                             },
                             { 
                                 title: "Legal Advisor", 
                                 subtitle: "1 position", 
-                                icon: "fas fa-book" 
+                                icon: "fas fa-book",
+                                responsibilities: [
+                                    "Local compliance monitoring",
+                                    "Community legal education",
+                                    "Dispute mediation",
+                                    "Regulatory guidance"
+                                ]
                             },
                             { 
                                 title: "Security & Strategy", 
                                 subtitle: "2 positions", 
-                                icon: "fas fa-lock" 
+                                icon: "fas fa-lock",
+                                responsibilities: [
+                                    "Local security coordination",
+                                    "Event safety planning",
+                                    "Risk assessment",
+                                    "Emergency response"
+                                ]
                             }
                         ]
                     }
@@ -722,9 +1025,12 @@
         function init() {
             // Event listeners for structure cards
             structureCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const structureType = card.getAttribute('data-structure');
-                    showStructure(structureType);
+                card.addEventListener('click', (e) => {
+                    // Don't trigger if clicked on toggle button
+                    if (!e.target.closest('.toggle-responsibilities')) {
+                        const structureType = card.getAttribute('data-structure');
+                        showStructure(structureType);
+                    }
                 });
                 
                 // Add touch feedback
@@ -735,6 +1041,26 @@
                 card.addEventListener('touchend', () => {
                     card.classList.remove('active');
                 }, { passive: true });
+            });
+
+            // Toggle responsibilities on landing page
+            document.querySelectorAll('.toggle-responsibilities').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.classList.toggle('active');
+                    const responsibilities = this.nextElementSibling;
+                    responsibilities.classList.toggle('show');
+                    
+                    // Change icon and text
+                    const icon = this.querySelector('i');
+                    if (responsibilities.classList.contains('show')) {
+                        icon.className = 'fas fa-chevron-up';
+                        this.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Responsibilities';
+                    } else {
+                        icon.className = 'fas fa-chevron-down';
+                        this.innerHTML = '<i class="fas fa-chevron-down"></i> Show Responsibilities';
+                    }
+                });
             });
 
             // Back button event
@@ -807,9 +1133,55 @@
                     nodeSubtitle.className = 'node-subtitle';
                     nodeSubtitle.textContent = node.subtitle;
                     
-                    nodeElement.appendChild(profileIcon);
-                    nodeElement.appendChild(nodeTitle);
-                    nodeElement.appendChild(nodeSubtitle);
+                    // Add responsibilities section if they exist
+                    if (node.responsibilities) {
+                        const responsibilitiesBtn = document.createElement('button');
+                        responsibilitiesBtn.className = 'toggle-responsibilities';
+                        responsibilitiesBtn.innerHTML = '<i class="fas fa-chevron-down"></i> Responsibilities';
+                        
+                        const responsibilitiesDiv = document.createElement('div');
+                        responsibilitiesDiv.className = 'node-responsibilities';
+                        
+                        const responsibilitiesTitle = document.createElement('h4');
+                        responsibilitiesTitle.textContent = 'Key Responsibilities:';
+                        
+                        const responsibilitiesList = document.createElement('ul');
+                        node.responsibilities.forEach(responsibility => {
+                            const li = document.createElement('li');
+                            li.textContent = responsibility;
+                            responsibilitiesList.appendChild(li);
+                        });
+                        
+                        responsibilitiesDiv.appendChild(responsibilitiesTitle);
+                        responsibilitiesDiv.appendChild(responsibilitiesList);
+                        
+                        // Add click event to toggle responsibilities
+                        responsibilitiesBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            this.classList.toggle('active');
+                            responsibilitiesDiv.classList.toggle('show');
+                            
+                            // Change icon
+                            const icon = this.querySelector('i');
+                            if (responsibilitiesDiv.classList.contains('show')) {
+                                icon.className = 'fas fa-chevron-up';
+                                this.innerHTML = '<i class="fas fa-chevron-up"></i> Responsibilities';
+                            } else {
+                                icon.className = 'fas fa-chevron-down';
+                                this.innerHTML = '<i class="fas fa-chevron-down"></i> Responsibilities';
+                            }
+                        });
+                        
+                        nodeElement.appendChild(profileIcon);
+                        nodeElement.appendChild(nodeTitle);
+                        nodeElement.appendChild(nodeSubtitle);
+                        nodeElement.appendChild(responsibilitiesBtn);
+                        nodeElement.appendChild(responsibilitiesDiv);
+                    } else {
+                        nodeElement.appendChild(profileIcon);
+                        nodeElement.appendChild(nodeTitle);
+                        nodeElement.appendChild(nodeSubtitle);
+                    }
                     
                     levelElement.appendChild(nodeElement);
                 });
